@@ -1,0 +1,88 @@
+empleado('Juan').
+empleado('Maria').
+empleado('Pepe').
+empleado('Luisa').
+empleado('Isabel').
+empleado('Pedro').
+empleado('Carlos').
+empleado('Miguel').
+
+proyecto('informatizacion','Barcelona').
+proyecto('reorganizacion','Barcelona').
+proyecto('recursos humanos', 'Barcelona').
+proyecto('ventas','Madrid').
+proyecto('compras','Madrid').
+proyecto('formacion','Madrid').
+proyecto('contabilidad','Sevilla').
+
+
+salario('Juan', 2000).
+salario('Maria', 1500).
+salario('Pepe', 2100).
+salario('Luisa', 1700).
+salario('Isabel', 1800).
+salario('Pedro', 1800).
+salario('Carlos', 2200).
+salario('Miguel', 1500).
+
+departamento('Juan', 'Recursos humanos').
+departamento('Maria', 'Administracion').
+departamento('Pepe', 'Recursos humanos').
+departamento('Luisa', 'Contabilidad').
+departamento('Isabel', 'Administracion').
+departamento('Pedro', 'Administracion').
+departamento('Carlos', 'Contabilidad').
+departamento('Miguel', 'Recursos humanos').
+
+localizacion('Recursos humanos', 'Barcelona').
+localizacion('Contabilidad', 'Barcelona').
+localizacion('Administracion', 'Madrid').
+
+%primero jefe, despues subordinado
+jefe('Pepe', 'Juan').
+jefe('Pepe', 'Maria').
+jefe('Carlos', 'Juan').
+jefe('Carlos', 'Isabel').
+jefe('Isabel', 'Miguel').
+jefe('Pedro', 'Maria').
+jefe('Pedro', 'Miguel').
+
+trabaja_en('Juan', 'informatizacion', 30).
+trabaja_en('Juan', 'formacion', 10).
+trabaja_en('Maria', 'ventas', 25).
+trabaja_en('Maria', 'compras', 10).
+trabaja_en('Maria', 'contabilidad', 5).
+trabaja_en('Pepe', 'reorganizacion', 15).
+trabaja_en('Pepe', 'formacion', 15).
+trabaja_en('Luisa', 'contabilidad', 20).
+trabaja_en('Luisa', 'informatizacion', 5).
+trabaja_en('Luisa', 'formacion', 10).
+trabaja_en('Isabel', 'reorganizacion', 25).
+trabaja_en('Isabel', 'contabilidad', 10).
+trabaja_en('Pedro', 'compras', 15).
+trabaja_en('Pedro', 'ventas', 15).
+trabaja_en('Pedro', 'contabilidad', 10).
+trabaja_en('Carlos', 'recursos humanos', 20).
+trabaja_en('Carlos', 'formacion', 5).
+trabaja_en('Carlos', 'contabilidad', 10).
+trabaja_en('Miguel', 'compras', 5).
+trabaja_en('Miguel', 'ventas', 5).
+trabaja_en('Miguel', 'formacion', 10).
+trabaja_en('Miguel', 'contabilidad', 10).
+
+c1(NOMBRE):- departamento(NOMBRE, 'Recursos humanos'), trabaja_en(NOMBRE, 'contabilidad', HORAS), HORAS > 10.
+
+c2(NOMBRE):- jefe('Pedro', NOMBRE).
+
+c3(NOMBRE, PROYECTO):- order_by(trabaja_en(NOMBRE, PROYECTO, _), [NOMBRE,PROYECTO],[d,a]).
+
+c4(NOMBRE):- empleado(NOMBRE), trabaja_en(NOMBRE2, _, _), NOMBRE \= NOMBRE2.
+
+c5(NOMBRE, LOCALIDAD):- departamento(NOMBRE, DEPT), localizacion(DEPT, LOCALIDAD), LOCALIDAD \= 'Barcelona', trabaja_en(NOMBRE, PROY, _), proyecto(PROY, DONDE), DONDE = 'Barcelona'.
+
+c6(NOMBRE, LOCALIDAD):- (departamento(NOMBRE, DEPT), localizacion(DEPT, LOCALIDAD), LOCALIDAD \= 'Barcelona') ; (trabaja_en(NOMBRE, PROY, _), proyecto(PROY, LOCALIDAD), LOCALIDAD = 'Barcelona').
+
+c7aux(NOMBRE):- (empleado(NOMBRE), jefe(NOMBRE,_)) ; (empleado(NOMBRE), jefe(_,NOMBRE)).
+c7(NOMBRE):- (empleado(NOMBRE), not(c7aux(NOMBRE))) ; (jefe(JEFE, NOMBRE), JEFE \= NOMBRE).
+
+c8(NOMBRE):- group_by(salario(NOMBRE, SALARIO), [SALARIO], (S = max(SALARIO))).
